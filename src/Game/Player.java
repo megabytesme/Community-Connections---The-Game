@@ -1,3 +1,4 @@
+package Game;
 public class Player {
     public static String[] getPlayers() {
         // Replace this with your actual implementation to get the player names
