@@ -1,10 +1,7 @@
-// This class could represent a player object that has attributes such as name, money, tokens, properties, etc.
-
-import java.util.ArrayList;
-
 public class Player {
-    private String name;
-    private int money;
-    private int position;
-    private ArrayList<Property> properties;
+    public static String[] getPlayers() {
+        // Replace this with your actual implementation to get the player names
+        // For demonstration purposes, I'm providing a simple array of player names
+        return new String[]{"Player 1", "Player 2", "Player 3", "Player 4", "Player 5"};
+    }
 }
