@@ -79,6 +79,7 @@ class GUI {
     private PlayerStatistics playerStats;
     private Dice dice;
     private Label diceResultLabel;
+    private boolean isSingleDice = true;
 
     public GUI(Shell shell) {
         // Create a grid layout for the shell
@@ -126,7 +127,7 @@ class GUI {
         
         // Create a composite for the button and label
         Composite buttonComposite = new Composite(shell, SWT.NONE);
-        GridLayout buttonLayout = new GridLayout(2, false);
+        GridLayout buttonLayout = new GridLayout(3, false);
         buttonComposite.setLayout(buttonLayout);
         GridData buttonData = new GridData(SWT.FILL, SWT.BOTTOM, true, false, 2, 1);
         buttonComposite.setLayoutData(buttonData);
@@ -135,17 +136,24 @@ class GUI {
         Button rollDiceButton = new Button(buttonComposite, SWT.PUSH);
         rollDiceButton.setText("Roll Dice");
         rollDiceButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        rollDiceButton.addListener(SWT.Selection, event -> rollDice());
+        
 
         // Create a label to display the result of the dice roll
         diceResultLabel = new Label(buttonComposite, SWT.NONE);
         diceResultLabel.setText("Dice Result: ");
         diceResultLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        // Create a checkbox for toggling the single or double dice mode
+        Button singleDiceButton = new Button(buttonComposite, SWT.CHECK);
+        singleDiceButton.setText("Single Dice");
+        singleDiceButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        // toggle the isSingleDice variable when the checkbox is clicked
+        singleDiceButton.addListener(SWT.Selection, event -> isSingleDice = !isSingleDice);
+        rollDiceButton.addListener(SWT.Selection, event -> rollDice(isSingleDice));
     }
 
-    private void rollDice() {
-        int diceResult = dice.rollDice(true);
-        // Update the dice result label with the rolled value
+    private void rollDice(boolean isSingleDice) {
+        int diceResult = dice.rollDice(isSingleDice);
         diceResultLabel.setText("Dice Result: " + diceResult);
     }
 
