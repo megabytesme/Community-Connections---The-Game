@@ -1,8 +1,19 @@
 package Game;
+
 public class Player {
+    private static String[] players;
+
+    // Function to set player names
+    public static void setPlayers(String[] playerNames) {
+        players = playerNames;
+    }
+
+    // Function to get player names
     public static String[] getPlayers() {
-        // Replace this with your actual implementation to get the player names
-        // For demonstration purposes, I'm providing a simple array of player names
-        return new String[]{"Player 1", "Player 2", "Player 3", "Player 4", "Player 5"};
+        // If players are not set, return an empty array
+        if (players == null) {
+            return new String[0];
+        }
+        return players;
     }
 }
