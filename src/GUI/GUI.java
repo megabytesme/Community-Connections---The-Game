@@ -50,7 +50,7 @@ public class GUI {
 
         // Create a composite for the player statistics and assets
         Composite statsComposite = new Composite(shell, SWT.NONE);
-        GridLayout statsLayout = new GridLayout(2, false);
+        GridLayout statsLayout = new GridLayout(5, false);
         statsComposite.setLayout(statsLayout);
         GridData statsData = new GridData(SWT.FILL, SWT.FILL, true, true);
         statsComposite.setLayoutData(statsData);
@@ -97,6 +97,27 @@ public class GUI {
     public void updateCurrentPlayer(String playerName) {
         if (playerStats != null) {
             playerStats.setCurrentPlayerName(playerName);
+        }
+    }
+
+    // Method to update the current player's money in the PlayerStatistics panel
+    public void updateMoney(int money) {
+        if (playerStats != null) {
+            playerStats.setMoney(money);
+        }
+    }
+
+    // Method to update the current player's resource tokens in the PlayerStatistics panel
+    public void updateResourceTokens(int resourceTokens) {
+        if (playerStats != null) {
+            playerStats.setResourceTokens(resourceTokens);
+        }
+    }
+
+    // Method to update the current player's current space in the PlayerStatistics panel
+    public void updateCurrentSpace(int currentSpace) {
+        if (playerStats != null) {
+            playerStats.setCurrentSpace(currentSpace);
         }
     }
 }

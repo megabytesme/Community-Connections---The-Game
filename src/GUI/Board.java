@@ -105,22 +105,16 @@ public class Board {
             board[i][j] = new Button(composite, SWT.TOGGLE);
             board[i][j].setData("id", index);
 
-            // Check if the current index is in the shops set
             if (shops.contains(index)) {
-                // Mark the shop spaces differently (you can modify as per your requirements)
                 board[i][j].setText("Shop");
             } else if (nodes.contains(index)) {
-                // Mark the node spaces differently (you can modify as per your requirements)
                 board[i][j].setText("Node");
             } else if (start.contains(index)) {
-                // Mark the start space differently (you can modify as per your requirements)
                 board[i][j].setText("Start");
             } else if (government.contains(index)) {
-                // Mark the government space differently (you can modify as per your requirements)
                 board[i][j].setText("Government");
             } else {
-                // Mark the property spaces differently (you can modify as per your requirements)
-                board[i][j].setText("Property");
+                board[i][j].setText("Property " + index);
             }
 
             // Create a new GridData for each button
