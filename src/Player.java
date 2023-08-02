@@ -1,27 +1,20 @@
-import java.util.Random;
 import java.util.Scanner;
 
 public class Player {
     private String name;
-    private int resources;
+    private String mark; // Symbol to represent the player on the game board
     private int position;
+    private int resources;
 
-    public Player(String name) {
+    public Player(String name, String mark) {
         this.name = name;
-        this.resources = 0;
-        this.position = 0;
+        this.mark = mark;
+        this.position = 0; // Start position on the game board (0-indexed)
+        this.resources = 0; // Start with 0 resources
     }
 
     public String getName() {
         return name;
-    }
-
-    public int getResources() {
-        return resources;
-    }
-
-    public void addResources(int amount) {
-        resources += amount;
     }
 
     public int getPosition() {
@@ -32,24 +25,45 @@ public class Player {
         this.position = position;
     }
 
-    // Method to get player's contribution for a square
-    public int getPlayerContribution(Square square, int maxContribution) {
-        // You can implement the specific logic for calculating player's contribution here
-        // For simplicity, we'll use the same logic as in the GameBoard class.
-        return getContribution(maxContribution);
+    public int getResources() {
+        return resources;
     }
 
-    // Method to get player's contribution to the community project
+    public void addResources(int resources) {
+        this.resources += resources;
+    }
+
+    // New method to set the player's mark
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+
+    // New method to get the player's mark
+    public String getMark() {
+        return mark;
+    }
+
     public int getContribution(int maxContribution) {
+        // Assume the player's contribution is input from the user in this example
         Scanner scanner = new Scanner(System.in);
         System.out.print(getName() + ", enter your contribution (0 to " + maxContribution + "): ");
         int contribution = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character left by nextInt()
         while (contribution < 0 || contribution > maxContribution) {
             System.out.print("Invalid contribution. Enter your contribution (0 to " + maxContribution + "): ");
             contribution = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character left by nextInt()
         }
+        return contribution;
+    }
+
+    public int getPlayerContribution(Square square, int maxContribution) {
+        Scanner scanner = new Scanner(System.in);
+        int contribution;
+        do {
+            System.out.print(this.getName() + ", enter your contribution (0 to " + maxContribution + "): ");
+            contribution = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character left by nextInt()
+        } while (contribution < 0 || contribution > maxContribution);
+
         return contribution;
     }
 }
