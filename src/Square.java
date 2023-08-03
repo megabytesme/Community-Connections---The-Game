@@ -31,7 +31,6 @@ public abstract class Square {
         return null;
     }
 }
-
 class PermissionSquare extends Square {
     public PermissionSquare() {
         super("Acquiring Permissions");
