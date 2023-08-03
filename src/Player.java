@@ -1,3 +1,4 @@
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +15,7 @@ public class Player {
     private List<PlayerProperty> playerProperties = new ArrayList<>();
     private GameBoard gameBoard;
     private int currentPropertyIndex; // New field to keep track of the current property index
-
+    private List<LogEntry> logEntries = new ArrayList<>();
     
     public Player(String name, String mark, GameBoard gameBoard) {
         this.name = name;
@@ -144,22 +145,21 @@ public class Player {
         return property.hasPermission() && property.isHardwareInstalled() && property.isEducationCompleted();
     }
 
-    // Method to remove fully enhanced properties
-    public void removeFullyEnhancedProperties() {
-        List<PlayerProperty> propertiesToRemove = new ArrayList<>();
-        for (PlayerProperty property : playerProperties) {
-            if (isPropertyFullyEnhanced(property)) {
-                propertiesToRemove.add(property);
-            }
-        }
-        playerProperties.removeAll(propertiesToRemove);
-        for (PlayerProperty property : propertiesToRemove) {
-            property.setPermission(false);
-        }
-        // check if there are any properties left
-        if (playerProperties.size() == 0) {
-            // if no properties left, player has won the game. set boolean to true to end the game
-            gameBoard.setGameOver(true);
-        }
+    // Method to remove property
+    public void removeProperty(PlayerProperty property) {
+        playerProperties.remove(property);
+    }
+
+    public void addLogEntry(String action) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        logEntries.add(new LogEntry(timestamp, name, action));
+    }
+
+    public List<LogEntry> getLogEntries() {
+        return logEntries;
+    }
+
+    public List<PlayerProperty> getProperties() {
+        return playerProperties;
     }
 }

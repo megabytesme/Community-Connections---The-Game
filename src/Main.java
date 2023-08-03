@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -65,6 +66,8 @@ public class Main {
             }
         }
 
+        GameLog gameLog = new GameLog(List.of(players));
+
         // Game loop
         while (true) {
             int currentPlayerIndex = gameBoard.getCurrentPlayerIndex();
@@ -100,24 +103,121 @@ public class Main {
             System.out.println("Current Game State:");
             System.out.println(currentPlayer.getName() + " - Position: " + currentPlayer.getPosition() +
                     " | Resources: " + currentPlayer.getResources());
-            System.out.println("Completed Tasks: " + currentPlayerProgress.getCompletedTasksString());
-
-            // Check if the player has completed the community network
-            if (currentPlayerProgress.isCompletedCommunityNetwork(players)) { // Pass the array of players as an argument
-                System.out.println("\nGame Over!");
-                System.out.println(currentPlayer.getName() + " has successfully completed the community network!");
-
-                // Mark all other players as ran out of resources
-                for (int j = 0; j < numPlayers; j++) {
-                    if (j != currentPlayerIndex) {
-                        Player otherPlayer = players[j];
-                        if (otherPlayer.getResources() <= 0) {
-                            System.out.println(otherPlayer.getName() + " ran out of resources. Better luck next time!");
+                    System.out.print("Has permission: ");
+                    boolean first = true;
+                    for (PlayerProperty property : currentPlayer.getProperties()) {
+                        if (property.hasPermission()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                System.out.print(", ");
+                            }
+                            System.out.print(property.getName());
                         }
                     }
+                    System.out.println();
+                    
+                    System.out.print("Hardware installed: ");
+                    first = true;
+                    for (PlayerProperty property : currentPlayer.getProperties()) {
+                        if (property.isHardwareInstalled()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                System.out.print(", ");
+                            }
+                            System.out.print(property.getName());
+                        }
+                    }
+                    System.out.println();
+                    
+                    System.out.print("Education completed: ");
+                    first = true;
+                    for (PlayerProperty property : currentPlayer.getProperties()) {
+                        if (property.isEducationCompleted()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                System.out.print(", ");
+                            }
+                            System.out.print(property.getName());
+                        }
+                    }
+                    System.out.println();
+                    
+                    System.out.print("Other properties: ");
+                    first = true;
+                    for (PlayerProperty property : currentPlayer.getProperties()) {
+                        if (!property.hasPermission() && !property.isHardwareInstalled() && !property.isEducationCompleted()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                System.out.print(", ");
+                            }
+                            System.out.print(property.getName());
+                        }
+                    }
+                    System.out.println();
+                    
+
+            // for loop to check if player properties are fully enhanced
+            for (PlayerProperty property : currentPlayer.getProperties()) {
+                if (currentPlayer.isPropertyFullyEnhanced(property)) {                   
+                    // Log entries
+                    currentPlayer.addLogEntry(currentPlayer.getName() + " has fully enhanced " + property.getName() + " and received a resource token.");
+                    currentPlayer.addLogEntry(currentPlayer.getName() + " - Position: " + currentPlayer.getPosition() + " | Resources: " + currentPlayer.getResources());
+                
+                    // remove the property from the player
+                    currentPlayer.removeProperty(property);
                 }
-                break; // Exit the game loop
             }
+
+            // check if the player has any properties left
+            if (currentPlayer.getProperties().size() == 0) {
+                // the person who wins is the current player
+                System.out.println(currentPlayer.getName() + " has won the game!");
+                System.out.println("Game Over!");
+
+                // Log entries
+                currentPlayer.addLogEntry(currentPlayer.getName() + " has won the game!");
+                currentPlayer.addLogEntry(currentPlayer.getName() + " - Position: " + currentPlayer.getPosition() + " | Resources: " + currentPlayer.getResources());
+                break;
+            }
+
+            // Log entries
+            currentPlayer.addLogEntry(currentPlayer.getName() + " has completed their turn.");
+            currentPlayer.addLogEntry(currentPlayer.getName() + " - Position: " + currentPlayer.getPosition() + " | Resources: " + currentPlayer.getResources());
+            currentPlayer.addLogEntry(currentPlayer.getName() + "'s properties:");
+            currentPlayer.addLogEntry("Has permission: ");
+            for (PlayerProperty property : currentPlayer.getProperties()) {
+                if (property.hasPermission()) {
+                    currentPlayer.addLogEntry(property.getName());
+                }
+            }
+            currentPlayer.addLogEntry("Hardware installed: ");
+            for (PlayerProperty property : currentPlayer.getProperties()) {
+                if (property.isHardwareInstalled()) {
+                    currentPlayer.addLogEntry(property.getName());
+                }
+            }
+            currentPlayer.addLogEntry("Education completed: ");
+            for (PlayerProperty property : currentPlayer.getProperties()) {
+                if (property.isEducationCompleted()) {
+                    currentPlayer.addLogEntry(property.getName());
+                }
+            }
+            currentPlayer.addLogEntry("Other properties: ");
+            for (PlayerProperty property : currentPlayer.getProperties()) {
+                if (!property.hasPermission() && !property.isHardwareInstalled() && !property.isEducationCompleted()) {
+                    currentPlayer.addLogEntry(property.getName());
+                }
+            }
+
+            // Flush the log to the file after each turn
+            gameLog.writeLogToFile("game_log.txt", currentPlayer);
+
+            // empty the log entries after each turn
+            currentPlayer.getLogEntries().clear();
 
             // Update the current player index for the next turn
             gameBoard.updateCurrentPlayerIndex(numPlayers);

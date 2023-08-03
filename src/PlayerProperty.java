@@ -1,5 +1,4 @@
 public class PlayerProperty {
-    private Square property;
     private boolean developed;
     private String name;
     private boolean hasPermission;
@@ -12,6 +11,11 @@ public class PlayerProperty {
         this.hasPermission = false;
         this.hardwareInstalled = false;
         this.educationCompleted = false;
+    }
+
+    @Override
+    public String toString() {
+        return name; // Assuming you have a variable named 'name' in the PlayerProperty class representing the name of the property
     }
 
     public String getName() {

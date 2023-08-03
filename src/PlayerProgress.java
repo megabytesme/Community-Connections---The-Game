@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class PlayerProgress {
     private boolean[] completedTasks;
     private int propertyStage; // Property enhancement level
