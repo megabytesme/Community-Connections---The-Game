@@ -18,11 +18,9 @@ public class Main {
     }
 
     private static void hardwareSpace(Player player) {
-        // check if property has permission
         PlayerProperty playerProperty = player.getCurrentProperty();
         if (playerProperty != null) {
             if (playerProperty.hasPermission()) {
-                // check if player has enough resources
                 if (player.getResourceTokens() >= 1) {
                     playerProperty.setHardwareInstalled(true);
                     player.useResourceToken(1);
@@ -55,10 +53,9 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Getting the number of players
         System.out.print("Enter the number of players (1 to 8): ");
         int numPlayers = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character left by nextInt()
+        scanner.nextLine();
 
         if (numPlayers < 1 || numPlayers > 8) {
             System.out.println("Invalid number of players. Please enter a number between 1 and 8.");
@@ -66,10 +63,9 @@ public class Main {
             return;
         }
 
-        // Array of symbols to represent players (can be extended if needed)
         String[] playerSymbols = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        
 
-        // Create an array to hold the player names
         String[] playerNames = new String[numPlayers];
 
         // Initializing players and asking for their names
@@ -78,35 +74,32 @@ public class Main {
             playerNames[i] = scanner.nextLine();
         }
 
-        // Creating an array to hold the player objects
         Player[] players = new Player[numPlayers];
 
-        // Ask the player if they want to use their own dice or the game's dice
-        System.out.print("Do you want to use your own dice (yes/no)? ");
+        System.out.print("Do you want to watch the game or play it? (yes = play, no = watch)");
         boolean useOwnDice = scanner.nextLine().trim().equalsIgnoreCase("yes");
 
-        // Creating a new game board
+        System.out.println("Enter the number of properties each player should have (1 to 10): ");
+        System.out.println("Note: The number of properties each player has will be the same. I recommend 1-2 for a short game, 3-5 for a long game.");
+        int numProperties = scanner.nextInt();
+
         GameBoard gameBoard = new GameBoard(playerNames, playerSymbols, useOwnDice);
 
-        // Initializing players with names, symbols, and gameBoard
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(playerNames[i], playerSymbols[i], gameBoard, useOwnDice); // Pass the useOwnDice parameter
+            players[i] = new Player(playerNames[i], playerSymbols[i], gameBoard, useOwnDice);
         }
 
         System.out.println("\nWelcome to the game!");
 
-        // Creating player properties for each player
-        int numPropertiesPerPlayer = 10;
+        int numPropertiesPerPlayer = numProperties;
 
         for (int i = 0; i < numPlayers; i++) {
             Player currentPlayer = players[i];
 
             for (int j = 0; j < numPropertiesPerPlayer; j++) {
-                // Create a new property for the player
                 String propertyName = "Property " + (j + 1);
                 PlayerProperty property = new PlayerProperty(propertyName);
 
-                // Add the property to the player
                 currentPlayer.addProperty(property);
             }
         }
@@ -121,7 +114,7 @@ public class Main {
             gameBoard.displayGameBoard(players);
             System.out.println("\n" + currentPlayer.getName() + " (" + currentPlayer.getMark() + ")" + ", it's your turn!");
 
-            int diceRoll = currentPlayer.rollDice(); // Use currentPlayer's rollDice() method
+            int diceRoll = currentPlayer.rollDice();
             gameBoard.movePlayer(currentPlayer, diceRoll, currentPlayer.getName());
 
             String currentSquare = gameBoard.getCurrentSquare();
