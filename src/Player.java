@@ -11,18 +11,22 @@ public class Player {
     private static Scanner scanner = new Scanner(System.in);
     private int x;
     private int y;
+    private int displayX;
+    private int displayY;
     private List<PlayerProperty> playerProperties = new ArrayList<>();
     private GameBoard gameBoard;
-    private int currentPropertyIndex; // New field to keep track of the current property index
+    private int currentPropertyIndex;
     private List<LogEntry> logEntries = new ArrayList<>();
     
-    public Player(String name, String mark, GameBoard gameBoard) {
+    public Player(String name, String mark, GameBoard gameBoard, boolean useOwnDice) {
         this.name = name;
         this.mark = mark;
         this.position = 0;
         this.resourceTokens = 2;
         this.gameBoard = gameBoard;
-        this.currentPropertyIndex = 0; // Initialize the current property index to 0
+        this.currentPropertyIndex = 0;
+        this.displayX = this.x;
+        this.displayY = this.y;
     }
 
     public void addProperty(PlayerProperty property) {
@@ -33,7 +37,7 @@ public class Player {
         if (currentPropertyIndex >= 0 && currentPropertyIndex < playerProperties.size()) {
             return playerProperties.get(currentPropertyIndex);
         }
-        return null; // If the currentPropertyIndex is out of range, return null
+        return null;
     }
 
     public void nextProperty() {
@@ -80,6 +84,27 @@ public class Player {
         this.y = y;
     }
 
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+
+        this.displayX = x;
+        this.displayY = y;
+    }
+
+    public int getDisplayX() {
+        return displayX;
+    }
+
+    public int getDisplayY() {
+        return displayY;
+    }
+
+    public void setDisplayPosition(int x, int y) {
+        this.displayX = x;
+        this.displayY = y;
+    }
+
     public int getResources() {
         return resourceTokens;
     }
@@ -88,12 +113,10 @@ public class Player {
         this.resourceTokens += resources;
     }
 
-    // New method to set the player's mark
     public void setMark(String mark) {
         this.mark = mark;
     }
 
-    // New method to get the player's mark
     public String getMark() {
         return mark;
     }
@@ -103,7 +126,7 @@ public class Player {
     }
 
     public void useResourceToken(int count) {
-        if (resourceTokens >= count) { // Check if there are enough available resource tokens
+        if (resourceTokens >= count) {
             resourceTokens -= count;
         } else {
             System.out.println("You don't have enough resource tokens to perform this task.");
@@ -118,12 +141,10 @@ public class Player {
         scanner.close();
     }
 
-    // Method to check if a property is fully enhanced
     public boolean isPropertyFullyEnhanced(PlayerProperty property) {
         return property.hasPermission() && property.isHardwareInstalled() && property.isEducationCompleted();
     }
 
-    // Method to remove property
     public void removeProperty(PlayerProperty property) {
         playerProperties.remove(property);
     }

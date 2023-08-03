@@ -1,6 +1,4 @@
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -16,13 +14,17 @@ public class GameBoard {
     private Scanner scanner;
     private Square[][] board;
     private final boolean useOwnDice;
+    private String currentSquare;
 
-    public GameBoard(String[] playerNames, String[] playerSymbols, boolean useOwnDice, Scanner scanner) {
+    public GameBoard(String[] playerNames, String[] playerSymbols, boolean useOwnDice) {
         if (playerNames.length < 1 || playerNames.length > 8) {
             throw new IllegalArgumentException("Number of players must be between 1 and 8.");
         }
         this.useOwnDice = useOwnDice;
-        this.scanner = scanner;
+
+        if (useOwnDice) {
+            this.scanner = new Scanner(System.in);
+        }
 
         squares = new Square[] {
             new StartSquare(),
@@ -31,8 +33,6 @@ public class GameBoard {
             new EducationSquare(),
             new ResourceSquare()
         };
-
-        shuffleSquares();
 
         int numPlayers = playerNames.length;
         playerPositions = new int[numPlayers];
@@ -43,7 +43,7 @@ public class GameBoard {
 
         players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(playerNames[i], playerSymbols[i], this);
+            players[i] = new Player(playerNames[i], playerSymbols[i], this, useOwnDice);
         }
 
         squareTypes = new int[size * size];
@@ -78,11 +78,6 @@ public class GameBoard {
         }
     }
 
-    private void shuffleSquares() {
-        List<Square> squareList = Arrays.asList(squares);
-        Collections.shuffle(squareList);
-        squareList.toArray(squares);
-    }
 
     public int rollDice() {
         if (useOwnDice) {
@@ -166,9 +161,32 @@ public class GameBoard {
                 x--;
             }
         }
+    
         player.setX(x);
         player.setY(y);
     
-        System.out.println(playerName + " (" + player.getMark() + ")" + " is on " + board[x][y].getName() + " (" + x + ", " + y + ")");
+        player.setDisplayPosition(x, y);
+    
+        System.out.println(playerName + " (" + player.getMark() + ")" + " is on " + board[player.getDisplayX()][player.getDisplayY()].getName() + " (" + player.getDisplayX() + ", " + player.getDisplayY() + ")");
+        currentSquare = board[player.getDisplayX()][player.getDisplayY()].getName();
+    }
+
+    public void performTask(Player player) {
+        Square currentSquare = getCurrentSquare(player.getPosition());
+    
+        if (currentSquare instanceof PermissionSquare) {
+            ((PermissionSquare) currentSquare).performTask(player);
+        } else if (currentSquare instanceof HardwareSquare) {
+            ((HardwareSquare) currentSquare).performTask(player);
+        } else if (currentSquare instanceof EducationSquare) {
+            ((EducationSquare) currentSquare).performTask(player);
+        } else if (currentSquare instanceof ResourceSquare) {
+            ((ResourceSquare) currentSquare).performTask(player);
+        } else {
+            System.out.println("This square doesn't have any tasks.");
+        }
+    }
+    public String getCurrentSquare() {
+        return currentSquare;
     }
 }
