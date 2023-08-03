@@ -1,18 +1,21 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayerProgress {
     private boolean[] completedTasks;
+    private int propertyStage; // Property enhancement level
 
     public PlayerProgress(int numTasks) {
         completedTasks = new boolean[numTasks];
+        propertyStage = 1; // Initialize propertyStage to the starting level
     }
 
-    // Update the markTaskCompleted method to take Square object as an argument
     public void markTaskCompleted(Square square) {
         int taskIndex = getTaskIndex(square);
         if (taskIndex >= 0) {
             completedTasks[taskIndex] = true;
         }
     }
-
 
     public int getTaskIndex(Square square) {
         for (int i = 0; i < completedTasks.length; i++) {
@@ -42,9 +45,20 @@ public class PlayerProgress {
         return sb.toString();
     }
 
-    public boolean isCompletedCommunityNetwork() {
-        // For simplicity, we assume that the player has completed the community network
-        // if all tasks are completed.
+    public boolean isPropertyDeckEnhanced() {
+        return propertyStage == 3;
+    }
+
+    public boolean isCompletedCommunityNetwork(Player[] players) {
+        for (Player player : players) {
+            if (player.getPropertyStage() < 3) {
+                return false;
+            }
+        }
+        return allTasksCompleted();
+    }
+
+    private boolean allTasksCompleted() {
         for (boolean completed : completedTasks) {
             if (!completed) {
                 return false;
@@ -64,8 +78,6 @@ public class PlayerProgress {
     }
 
     private String getTaskName(int taskIndex) {
-        // In a real game, you would have a list of all tasks and retrieve the name using the index.
-        // For simplicity, we'll use a placeholder task name here.
         String[] taskNames = {
             "Acquiring Permissions",
             "Acquiring and Installing Hardware",
@@ -77,5 +89,33 @@ public class PlayerProgress {
             return taskNames[taskIndex];
         }
         return "UNKNOWN";
+    }
+
+    public int getCompletedTasks() {
+        int count = 0;
+        for (boolean completed : completedTasks) {
+            if (completed) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void addCompletedTask() {
+        // Increment the property stage when a task is completed
+        propertyStage++;
+    }
+
+    public void advanceProperty() {
+        // Advance the property to the next stage (you need to implement the logic for this)
+    }
+
+    // Add these two methods to resolve errors
+    public int getPropertyStage() {
+        return propertyStage;
+    }
+
+    public void incrementPropertyStage() {
+        propertyStage++;
     }
 }

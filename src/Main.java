@@ -92,7 +92,7 @@ public class Main {
             System.out.println("Completed Tasks: " + currentPlayerProgress.getCompletedTasksString());
 
             // Check if the player has completed the community network
-            if (currentPlayerProgress.isCompletedCommunityNetwork()) {
+            if (currentPlayerProgress.isCompletedCommunityNetwork(players)) { // Pass the array of players as an argument
                 System.out.println("\nGame Over!");
                 System.out.println(currentPlayer.getName() + " has successfully completed the community network!");
 

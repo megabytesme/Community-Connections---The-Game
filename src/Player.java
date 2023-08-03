@@ -20,12 +20,15 @@ public class Player {
         this.position = 0;
         this.permissionTokens = 2;
         this.resourceTokens = 2;
+        this.playerProgress = new PlayerProgress(4); // Set the initial number of tasks (4 in this case)
     }
 
+    // Method to add a property to the player's list of properties
     public void addProperty(PropertySquare propertySquare) {
         properties.add(propertySquare);
     }
 
+    // Method to get the player's list of properties
     public List<PropertySquare> getProperties() {
         return properties;
     }
@@ -41,19 +44,19 @@ public class Player {
     public void setPosition(int position) {
         this.position = position;
     }
-    
+
     public int getX() {
         return x;
     }
-    
+
     public void setX(int x) {
         this.x = x;
     }
-    
+
     public int getY() {
         return y;
     }
-    
+
     public void setY(int y) {
         this.y = y;
     }
@@ -76,49 +79,50 @@ public class Player {
         return mark;
     }
 
-    public int getContribution(int maxContribution) {
-        System.out.print(getName() + ", enter your contribution (0 to " + maxContribution + "): ");
-        int contribution = scanner.nextInt();
-        while (contribution < 0 || contribution > maxContribution) {
-            System.out.print("Invalid contribution. Enter your contribution (0 to " + maxContribution + "): ");
-            contribution = scanner.nextInt();
-        }
-        return contribution;
-    }
-
-    public int getPlayerContribution(Square square, int maxContribution) {
-        int contribution;
-        do {
-            System.out.print(this.getName() + ", enter your contribution (0 to " + maxContribution + "): ");
-            contribution = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character left by nextInt()
-        } while (contribution < 0 || contribution > maxContribution);
-
-        return contribution;
+    private boolean wantsToContribute() {
+        System.out.print("Do you want to contribute (yes/no)? ");
+        String answer = scanner.nextLine().trim().toLowerCase();
+        return answer.equals("yes");
     }
 
     public void addPermissionToken() {
-        permissionTokens++;
+        if (permissionTokens < 3) { // Limit the number of permission tokens to 3
+            permissionTokens++;
+        }
     }
 
     public void usePermissionToken() {
-        permissionTokens--;
-    }
-
-    public int getPermissionTokens() {
-        return permissionTokens;
+        if (permissionTokens > 0) { // Check if there are available permission tokens
+            permissionTokens--;
+        }
     }
 
     public void addResourceToken() {
         resourceTokens++;
     }
 
-    public void useResourceToken() {
-        resourceTokens--;
+    public void useResourceToken(int count) {
+        if (resourceTokens >= count) { // Check if there are enough available resource tokens
+            resourceTokens -= count;
+        } else {
+            System.out.println("You don't have enough resource tokens to perform this task.");
+        }
+    }
+
+    public int getPermissionTokens() {
+        return permissionTokens;
     }
 
     public int getResourceTokens() {
         return resourceTokens;
+    }
+
+    public int getPropertyStage() {
+        return playerProgress.getPropertyStage();
+    }
+
+    public void incrementPropertyStage() {
+        playerProgress.incrementPropertyStage();
     }
 
     public PlayerProgress getPlayerProgress() {
@@ -131,5 +135,9 @@ public class Player {
 
     public static void closeScanner() {
         scanner.close();
+    }
+
+    public void performTask(Square square) {
+        square.performTask(this, playerProgress);
     }
 }
