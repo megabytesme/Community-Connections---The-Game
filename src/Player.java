@@ -8,7 +8,6 @@ public class Player {
     private String mark;
     private int position;
     private int resourceTokens;
-    private PlayerProgress playerProgress;
     private static Scanner scanner = new Scanner(System.in);
     private int x;
     private int y;
@@ -22,7 +21,6 @@ public class Player {
         this.mark = mark;
         this.position = 0;
         this.resourceTokens = 2;
-        this.playerProgress = new PlayerProgress(4); // Set the initial number of tasks (4 in this case)
         this.gameBoard = gameBoard;
         this.currentPropertyIndex = 0; // Initialize the current property index to 0
     }
@@ -116,28 +114,8 @@ public class Player {
         return resourceTokens;
     }
 
-    public int getPropertyStage() {
-        return playerProgress.getPropertyStage();
-    }
-
-    public void incrementPropertyStage() {
-        playerProgress.incrementPropertyStage();
-    }
-
-    public PlayerProgress getPlayerProgress() {
-        return playerProgress;
-    }
-
-    public void setPlayerProgress(PlayerProgress playerProgress) {
-        this.playerProgress = playerProgress;
-    }
-
     public static void closeScanner() {
         scanner.close();
-    }
-
-    public void performTask(Square square) {
-        square.performTask(this, playerProgress);
     }
 
     // Method to check if a property is fully enhanced

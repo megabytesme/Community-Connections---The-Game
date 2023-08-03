@@ -12,7 +12,7 @@ public abstract class Square {
         return name;
     }
 
-    public void performTask(Player player, PlayerProgress playerProgress) {
+    public void performTask(Player player) {
         System.out.println("This square doesn't have any tasks.");
     }
 
@@ -27,7 +27,7 @@ class PermissionSquare extends Square {
     }
 
     @Override
-    public void performTask(Player player, PlayerProgress playerProgress) {
+    public void performTask(Player player) {
         int diceRoll = player.rollDice();
         if (diceRoll % 2 == 0) {
             System.out.println(player.getName() + " rolled an even number and got permission!");
@@ -49,7 +49,7 @@ class HardwareSquare extends Square {
     }
 
     @Override
-    public void performTask(Player player, PlayerProgress playerProgress) {
+    public void performTask(Player player) {
         int taskCost = 1; // The cost of installing hardware
 
         // Check if the player's property has permission
@@ -63,11 +63,9 @@ class HardwareSquare extends Square {
                 // Check if the player has enough resources to install hardware
                 if (player.getResourceTokens() >= taskCost) {
                     player.useResourceToken(1); // Deduct one resource token from the player
-                    playerProgress.addCompletedTask();
                     playerProperty.setHardwareInstalled(true); // Mark hardware as installed
 
                     System.out.println(player.getName() + " successfully installed hardware!");
-                    playerProgress.advanceProperty(); // Advance the property to the next stage
                 } else {
                     System.out.println(player.getName() + " didn't have enough resources to install hardware. You need more resources!");
                 }
@@ -86,12 +84,10 @@ class EducationSquare extends Square {
     }
 
     @Override
-    public void performTask(Player player, PlayerProgress playerProgress) {
+    public void performTask(Player player) {
         PlayerProperty playerProperty = player.getCurrentProperty();
         if (!playerProperty.isEducationCompleted()) {
-            playerProperty.setEducationCompleted(true); // Mark education as completed
-            playerProgress.addCompletedTask();
-            playerProgress.advanceProperty(); // Advance the property to the next stage
+            playerProperty.setEducationCompleted(true);
         } else {
             System.out.println(player.getName() + " has already completed education for this property.");
         }
@@ -104,7 +100,7 @@ class ResourceSquare extends Square {
     }
 
     @Override
-    public void performTask(Player player, PlayerProgress playerProgress) {
+    public void performTask(Player player) {
         player.addResourceToken();
     }
 }
@@ -115,7 +111,7 @@ class StartSquare extends Square {
     }
 
     @Override
-    public void performTask(Player player, PlayerProgress playerProgress) {
+    public void performTask(Player player) {
         player.addResourceToken();
     }
 }

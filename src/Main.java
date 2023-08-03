@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -43,11 +42,6 @@ public class Main {
             players[i] = new Player(playerNames[i], playerSymbols[i], gameBoard);
         }
 
-        // Creating player progress for each player
-        PlayerProgress[] playerProgresses = new PlayerProgress[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
-            playerProgresses[i] = new PlayerProgress(gameBoard.getNumTasks());
-        }
         System.out.println("\nWelcome to the game!");
 
         // Creating player properties for each player
@@ -66,13 +60,12 @@ public class Main {
             }
         }
 
-        GameLog gameLog = new GameLog(List.of(players));
+        GameLog gameLog = new GameLog();
 
         // Game loop
         while (true) {
             int currentPlayerIndex = gameBoard.getCurrentPlayerIndex();
             Player currentPlayer = players[currentPlayerIndex];
-            PlayerProgress currentPlayerProgress = playerProgresses[currentPlayerIndex];
 
             gameBoard.displayGameBoard(players);
             System.out.println("\n" + currentPlayer.getName() + " (" + currentPlayer.getMark() + ")" + ", it's your turn!");
@@ -87,16 +80,16 @@ public class Main {
             // Perform the action based on the type of square the player lands on
             if (currentSquare instanceof PermissionSquare) {
                 // Perform the permission task for the player
-                ((PermissionSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+                ((PermissionSquare) currentSquare).performTask(currentPlayer);
             } else if (currentSquare instanceof HardwareSquare) {
                 // Perform the hardware task for the player
-                ((HardwareSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+                ((HardwareSquare) currentSquare).performTask(currentPlayer);
             } else if (currentSquare instanceof EducationSquare) {
                 // Perform the education task for the player
-                ((EducationSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+                ((EducationSquare) currentSquare).performTask(currentPlayer);
             } else if (currentSquare instanceof ResourceSquare) {
                 // Perform the resource collection task for the player
-                ((ResourceSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+                ((ResourceSquare) currentSquare).performTask(currentPlayer);
             }
 
             // Displaying current player's position and resources
