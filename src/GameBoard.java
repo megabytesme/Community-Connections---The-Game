@@ -19,12 +19,14 @@ public class GameBoard {
     private Player[] players;
     private Scanner scanner;
     private Square[][] board;
+    private final boolean useOwnDice;
 
-    public GameBoard(String[] playerNames, String[] playerSymbols, Scanner scanner) {
+    public GameBoard(String[] playerNames, String[] playerSymbols, boolean useOwnDice, Scanner scanner) {
         if (playerNames.length < 1 || playerNames.length > 8) {
             throw new IllegalArgumentException("Number of players must be between 1 and 8.");
         }
-        this.scanner = scanner; // Set the provided scanner to the local scanner variable
+        this.useOwnDice = useOwnDice;
+        this.scanner = scanner;
 
         squares = new Square[] {
             new StartSquare(),
@@ -137,8 +139,16 @@ public class GameBoard {
     }
 
     public int rollDice() {
-        Random random = new Random();
-        return random.nextInt(6) + 1;
+        if (useOwnDice) {
+            // Use the player's dice (manual input)
+            System.out.print(players[currentPlayerIndex].getName() + ", enter the dice roll (1 to 6): ");
+            int diceRoll = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character left by nextInt()
+            return diceRoll;
+        } else {
+            // Use the game's dice (random number between 1 and 6)
+            return new Random().nextInt(6) + 1;
+        }
     }
 
     public SquareType getSquareType(int position) {
@@ -246,8 +256,14 @@ public class GameBoard {
         player.setX(x);
         player.setY(y);
     
-        // print a message to show the movement
-        System.out.println(playerName + " moved to (" + x + ", " + y + ")");
+        System.out.println(playerName + " (" + player.getMark() + ")" + " is on " + board[x][y].getName() + " (" + x + ", " + y + ")");
+        
+        // wait for 1 second
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     public boolean hasPlayerDevelopedAllProperties(Player player) {

@@ -35,15 +35,18 @@ public class Main {
             players[i] = new Player(playerNames[i], playerSymbols[i]);
         }
 
+        // Ask the player if they want to use their own dice or the game's dice
+        System.out.print("Do you want to use your own dice (yes/no)? ");
+        boolean useOwnDice = scanner.nextLine().trim().equalsIgnoreCase("yes");
+
         // Creating a new game board
-        GameBoard gameBoard = new GameBoard(playerNames, playerSymbols, scanner); // Pass the shared scanner here
+        GameBoard gameBoard = new GameBoard(playerNames, playerSymbols, useOwnDice, scanner);
 
         // Creating player progress for each player
         PlayerProgress[] playerProgresses = new PlayerProgress[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
             playerProgresses[i] = new PlayerProgress(gameBoard.getNumTasks());
         }
-
         System.out.println("\nWelcome to the game!");
 
         // Game loop
