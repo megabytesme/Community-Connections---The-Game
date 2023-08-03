@@ -2,29 +2,18 @@ import java.util.Scanner;
 
 public abstract class Square {
     protected String name;
-    protected boolean developed;
     protected Scanner scanner = new Scanner(System.in);
 
     public Square(String name) {
         this.name = name;
-        this.developed = false;
     }
 
     public String getName() {
         return name;
     }
 
-    public boolean isDeveloped() {
-        return developed;
-    }
-
-    public void setDeveloped(boolean developed) {
-        this.developed = developed;
-    }
-
     public void performTask(Player player, PlayerProgress playerProgress) {
-        player.addPermissionToken();
-        playerProgress.markTaskCompleted(this); // Pass the current Square object
+        System.out.println("This square doesn't have any tasks.");
     }
 
     public SquareType getType() {
@@ -39,18 +28,18 @@ class PermissionSquare extends Square {
 
     @Override
     public void performTask(Player player, PlayerProgress playerProgress) {
-        if (!developed) {
-            int contribution = 50; // Set the fixed contribution for PermissionSquare
-            player.addResources(contribution);
-            // Update the progress of the task
-            playerProgress.markTaskCompleted(this); // Pass the current PermissionSquare instance
-            developed = true; // Mark the property as developed after acquiring permission
+        int diceRoll = player.rollDice();
+        if (diceRoll % 2 == 0) {
+            System.out.println(player.getName() + " rolled an even number and got permission!");
+            PlayerProperty playerProperty = player.getCurrentProperty();
+            if (playerProperty != null) {
+                playerProperty.setPermission(true);
+            } else {
+                System.out.println(player.getName() + " doesn't own any property to grant permission.");
+            }
+        } else {
+            System.out.println(player.getName() + " rolled an odd number and failed to get permission.");
         }
-    }
-
-    public void attemptGetPermission(Player player) {
-        // Implement the specific logic to attempt to get permission
-        // For example, you can prompt the player for input or use random chance to determine success.
     }
 }
 
@@ -61,32 +50,33 @@ class HardwareSquare extends Square {
 
     @Override
     public void performTask(Player player, PlayerProgress playerProgress) {
-        int taskCost = getTaskCost(playerProgress.getCompletedTasks());
+        int taskCost = 1; // The cost of installing hardware
 
-        // Ask the player for their contribution
-        System.out.print(player.getName() + ", enter your contribution (0 to " + taskCost + "): ");
-        int contribution = scanner.nextInt();
-        while (contribution < 0 || contribution > taskCost) {
-            System.out.print("Invalid contribution. Enter your contribution (0 to " + taskCost + "): ");
-            contribution = scanner.nextInt();
-        }
+        // Check if the player's property has permission
+        PlayerProperty playerProperty = player.getCurrentProperty();
+        if (playerProperty != null && playerProperty.hasPermission()) {
+            // Ask the player if they want to spend a resource token to install hardware
+            System.out.print(player.getName() + ", do you want to spend a resource token to install hardware? (yes/no): ");
+            String response = scanner.nextLine().trim().toLowerCase();
 
-        playerProgress.addCompletedTask();
-        player.useResourceToken(contribution); // Deduct the player's contribution from the resources
+            if (response.equals("yes")) {
+                // Check if the player has enough resources to install hardware
+                if (player.getResourceTokens() >= taskCost) {
+                    player.useResourceToken(1); // Deduct one resource token from the player
+                    playerProgress.addCompletedTask();
+                    playerProperty.setHardwareInstalled(true); // Mark hardware as installed
 
-        // Check if the player has enough resources to advance the property to the next stage
-        if (contribution >= taskCost) {
-            System.out.println(player.getName() + " successfully enhanced their property!");
-            playerProgress.advanceProperty(); // Advance the property to the next stage
+                    System.out.println(player.getName() + " successfully installed hardware!");
+                    playerProgress.advanceProperty(); // Advance the property to the next stage
+                } else {
+                    System.out.println(player.getName() + " didn't have enough resources to install hardware. You need more resources!");
+                }
+            } else {
+                System.out.println(player.getName() + " chose not to install hardware this time.");
+            }
         } else {
-            System.out.println(player.getName() + " didn't contribute enough to enhance their property this time.");
+            System.out.println(player.getName() + " cannot install hardware without permission on their property.");
         }
-    }
-
-    private int getTaskCost(int completedTasks) {
-        // Provide the task cost based on the number of completed tasks
-        // You can implement your custom logic here
-        return 0;
     }
 }
 
@@ -97,12 +87,13 @@ class EducationSquare extends Square {
 
     @Override
     public void performTask(Player player, PlayerProgress playerProgress) {
-        if (!developed) {
-            int contribution = 30; // Set the fixed contribution for EducationSquare
-            player.addResources(contribution);
-            // Update the progress of the task
-            playerProgress.markTaskCompleted(this); // Pass the current EducationSquare instance
-            developed = true; // Mark the property as developed after educating users
+        PlayerProperty playerProperty = player.getCurrentProperty();
+        if (!playerProperty.isEducationCompleted()) {
+            playerProperty.setEducationCompleted(true); // Mark education as completed
+            playerProgress.addCompletedTask();
+            playerProgress.advanceProperty(); // Advance the property to the next stage
+        } else {
+            System.out.println(player.getName() + " has already completed education for this property.");
         }
     }
 }
@@ -114,13 +105,7 @@ class ResourceSquare extends Square {
 
     @Override
     public void performTask(Player player, PlayerProgress playerProgress) {
-        if (!developed) {
-            int contribution = 100; // Set the fixed contribution for ResourceSquare
-            player.addResources(contribution);
-            // Update the progress of the task
-            playerProgress.markTaskCompleted(this); // Pass the current ResourceSquare instance
-            developed = true; // Mark the property as developed after collecting resources
-        }
+        player.addResourceToken();
     }
 }
 
@@ -131,8 +116,6 @@ class StartSquare extends Square {
 
     @Override
     public void performTask(Player player, PlayerProgress playerProgress) {
-        player.addPermissionToken();
         player.addResourceToken();
-        playerProgress.markTaskCompleted(this); // Pass the current Square instance (this) instead of player.getPosition()
     }
 }

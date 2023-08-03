@@ -6,29 +6,49 @@ public class Player {
     private String name;
     private String mark;
     private int position;
-    private int permissionTokens;
     private int resourceTokens;
     private PlayerProgress playerProgress;
     private static Scanner scanner = new Scanner(System.in);
     private int x;
     private int y;
     private List<PlayerProperty> playerProperties = new ArrayList<>();
+    private GameBoard gameBoard;
+    private int currentPropertyIndex; // New field to keep track of the current property index
 
-    public Player(String name, String mark) {
+    
+    public Player(String name, String mark, GameBoard gameBoard) {
         this.name = name;
         this.mark = mark;
         this.position = 0;
-        this.permissionTokens = 2;
         this.resourceTokens = 2;
         this.playerProgress = new PlayerProgress(4); // Set the initial number of tasks (4 in this case)
+        this.gameBoard = gameBoard;
+        this.currentPropertyIndex = 0; // Initialize the current property index to 0
     }
 
-    // Method to add a property to the player's list of properties
     public void addProperty(PlayerProperty property) {
         playerProperties.add(property);
     }
 
-    // Method to get the player's list of properties
+    public PlayerProperty getCurrentProperty() {
+        if (currentPropertyIndex >= 0 && currentPropertyIndex < playerProperties.size()) {
+            return playerProperties.get(currentPropertyIndex);
+        }
+        return null; // If the currentPropertyIndex is out of range, return null
+    }
+
+    public void nextProperty() {
+        currentPropertyIndex++;
+    }
+
+    public void resetPropertyIndex() {
+        currentPropertyIndex = 0;
+    }
+
+    public int rollDice() {
+        return gameBoard.rollDice();
+    }
+
     public List<PlayerProperty> getPlayerProperties() {
         return playerProperties;
     }
@@ -79,24 +99,6 @@ public class Player {
         return mark;
     }
 
-    private boolean wantsToContribute() {
-        System.out.print("Do you want to contribute (yes/no)? ");
-        String answer = scanner.nextLine().trim().toLowerCase();
-        return answer.equals("yes");
-    }
-
-    public void addPermissionToken() {
-        if (permissionTokens < 3) { // Limit the number of permission tokens to 3
-            permissionTokens++;
-        }
-    }
-
-    public void usePermissionToken() {
-        if (permissionTokens > 0) { // Check if there are available permission tokens
-            permissionTokens--;
-        }
-    }
-
     public void addResourceToken() {
         resourceTokens++;
     }
@@ -107,10 +109,6 @@ public class Player {
         } else {
             System.out.println("You don't have enough resource tokens to perform this task.");
         }
-    }
-
-    public int getPermissionTokens() {
-        return permissionTokens;
     }
 
     public int getResourceTokens() {
@@ -139,5 +137,29 @@ public class Player {
 
     public void performTask(Square square) {
         square.performTask(this, playerProgress);
+    }
+
+    // Method to check if a property is fully enhanced
+    public boolean isPropertyFullyEnhanced(PlayerProperty property) {
+        return property.hasPermission() && property.isHardwareInstalled() && property.isEducationCompleted();
+    }
+
+    // Method to remove fully enhanced properties
+    public void removeFullyEnhancedProperties() {
+        List<PlayerProperty> propertiesToRemove = new ArrayList<>();
+        for (PlayerProperty property : playerProperties) {
+            if (isPropertyFullyEnhanced(property)) {
+                propertiesToRemove.add(property);
+            }
+        }
+        playerProperties.removeAll(propertiesToRemove);
+        for (PlayerProperty property : propertiesToRemove) {
+            property.setPermission(false);
+        }
+        // check if there are any properties left
+        if (playerProperties.size() == 0) {
+            // if no properties left, player has won the game. set boolean to true to end the game
+            gameBoard.setGameOver(true);
+        }
     }
 }

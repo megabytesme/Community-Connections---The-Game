@@ -57,7 +57,7 @@ public class GameBoard {
 
         players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(playerNames[i], playerSymbols[i]);
+            players[i] = new Player(playerNames[i], playerSymbols[i], this);
         }
 
         // Initialize the squareTypes array with the types of squares
@@ -116,7 +116,9 @@ public class GameBoard {
             return diceRoll;
         } else {
             // Use the game's dice (random number between 1 and 6)
-            return new Random().nextInt(6) + 1;
+            int diceRoll = new Random().nextInt(6) + 1;
+            System.out.println("You rolled a " + diceRoll);
+            return diceRoll;
         }
     }
 
@@ -231,13 +233,6 @@ public class GameBoard {
         player.setY(y);
     
         System.out.println(playerName + " (" + player.getMark() + ")" + " is on " + board[x][y].getName() + " (" + x + ", " + y + ")");
-        
-        // wait for 1 second
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean isGameOver() {

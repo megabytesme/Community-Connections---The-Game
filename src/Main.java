@@ -27,13 +27,8 @@ public class Main {
             playerNames[i] = scanner.nextLine();
         }
 
-        // Create an array to hold the player objects
+        // Creating an array to hold the player objects
         Player[] players = new Player[numPlayers];
-
-        // Initializing players with names and symbols
-        for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(playerNames[i], playerSymbols[i]);
-        }
 
         // Ask the player if they want to use their own dice or the game's dice
         System.out.print("Do you want to use your own dice (yes/no)? ");
@@ -42,12 +37,33 @@ public class Main {
         // Creating a new game board
         GameBoard gameBoard = new GameBoard(playerNames, playerSymbols, useOwnDice, scanner);
 
+        // Initializing players with names, symbols, and gameBoard
+        for (int i = 0; i < numPlayers; i++) {
+            players[i] = new Player(playerNames[i], playerSymbols[i], gameBoard);
+        }
+
         // Creating player progress for each player
         PlayerProgress[] playerProgresses = new PlayerProgress[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
             playerProgresses[i] = new PlayerProgress(gameBoard.getNumTasks());
         }
         System.out.println("\nWelcome to the game!");
+
+        // Creating player properties for each player
+        int numPropertiesPerPlayer = 10;
+
+        for (int i = 0; i < numPlayers; i++) {
+            Player currentPlayer = players[i];
+
+            for (int j = 0; j < numPropertiesPerPlayer; j++) {
+                // Create a new property for the player
+                String propertyName = "Property " + (j + 1);
+                PlayerProperty property = new PlayerProperty(propertyName);
+
+                // Add the property to the player
+                currentPlayer.addProperty(property);
+            }
+        }
 
         // Game loop
         while (true) {
@@ -60,7 +76,6 @@ public class Main {
 
             // Rolling the dice and moving the player
             int diceRoll = gameBoard.rollDice();
-            System.out.println("You rolled a " + diceRoll);
             gameBoard.movePlayer(currentPlayer, diceRoll, currentPlayer.getName());
 
             // Getting the current square the player is on
@@ -68,12 +83,8 @@ public class Main {
 
             // Perform the action based on the type of square the player lands on
             if (currentSquare instanceof PermissionSquare) {
-                // Ask the player if they want to attempt getting permission
-                System.out.print("Do you want to attempt getting permission (yes/no)? ");
-                String answer = scanner.nextLine().trim().toLowerCase();
-                if (answer.equals("yes")) {
-                    ((PermissionSquare) currentSquare).attemptGetPermission(currentPlayer);
-                }
+                // Perform the permission task for the player
+                ((PermissionSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
             } else if (currentSquare instanceof HardwareSquare) {
                 // Perform the hardware task for the player
                 ((HardwareSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
