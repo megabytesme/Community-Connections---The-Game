@@ -12,7 +12,7 @@ public class Player {
     private static Scanner scanner = new Scanner(System.in);
     private int x;
     private int y;
-    private List<PropertySquare> properties = new ArrayList<>();
+    private List<PlayerProperty> playerProperties = new ArrayList<>();
 
     public Player(String name, String mark) {
         this.name = name;
@@ -24,13 +24,13 @@ public class Player {
     }
 
     // Method to add a property to the player's list of properties
-    public void addProperty(PropertySquare propertySquare) {
-        properties.add(propertySquare);
+    public void addProperty(PlayerProperty property) {
+        playerProperties.add(property);
     }
 
     // Method to get the player's list of properties
-    public List<PropertySquare> getProperties() {
-        return properties;
+    public List<PlayerProperty> getPlayerProperties() {
+        return playerProperties;
     }
 
     public String getName() {

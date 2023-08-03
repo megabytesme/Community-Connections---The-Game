@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class PlayerProgress {
     private boolean[] completedTasks;
@@ -92,13 +91,7 @@ public class PlayerProgress {
     }
 
     public int getCompletedTasks() {
-        int count = 0;
-        for (boolean completed : completedTasks) {
-            if (completed) {
-                count++;
-            }
-        }
-        return count;
+        return getCompletedTasksCount();
     }
 
     public void addCompletedTask() {
@@ -108,9 +101,11 @@ public class PlayerProgress {
 
     public void advanceProperty() {
         // Advance the property to the next stage (you need to implement the logic for this)
+        // Here, you can define how the property advances to the next stage based on the player's completed tasks.
+        // For example, if the player has completed a certain number of tasks, you can increment the propertyStage.
+        // You can implement your custom logic here based on the game's rules.
     }
 
-    // Add these two methods to resolve errors
     public int getPropertyStage() {
         return propertyStage;
     }

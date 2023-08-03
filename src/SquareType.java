@@ -3,6 +3,5 @@ public enum SquareType {
     HARDWARE,
     EDUCATION,
     RESOURCE,
-    START,
-    PROPERTY
+    START
 }

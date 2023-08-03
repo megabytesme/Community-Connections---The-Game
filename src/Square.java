@@ -136,38 +136,3 @@ class StartSquare extends Square {
         playerProgress.markTaskCompleted(this); // Pass the current Square instance (this) instead of player.getPosition()
     }
 }
-
-class PropertySquare extends Square {
-    private Player owner;
-    private int propertyStage; // Property enhancement level
-
-    public PropertySquare() {
-        super("Property");
-        this.developed = false;
-        this.owner = null;
-        this.propertyStage = 0; // Initialize propertyStage to 0 (no progress)
-    }
-
-    public int getPropertyStage() {
-        return propertyStage;
-    }
-
-    public void incrementPropertyStage() {
-        propertyStage++;
-    }
-
-    @Override
-    public void performTask(Player player, PlayerProgress playerProgress) {
-        player.addPermissionToken();
-        player.addResourceToken(); // Give the player 1 resource token for landing on the Start square
-        playerProgress.markTaskCompleted(this); // Pass the current Square instance (this) instead of player.getPosition()
-    }
-
-    public void setOwner(Player player) {
-        this.owner = player;
-    }
-
-    public Player getOwner() {
-        return owner;
-    }
-}

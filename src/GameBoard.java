@@ -60,8 +60,6 @@ public class GameBoard {
             players[i] = new Player(playerNames[i], playerSymbols[i]);
         }
 
-        assignPropertiesToPlayers(players);
-
         // Initialize the squareTypes array with the types of squares
         squareTypes = new int[size * size];
         Arrays.fill(squareTypes, SquareType.START.ordinal()); // Set all squares to StartSquare initially
@@ -100,49 +98,6 @@ public class GameBoard {
         Collections.shuffle(squareList);
         squareList.toArray(squares);
     }
-
-    private void assignPropertiesToPlayers(Player[] players) {
-        List<Square> propertySquares = new ArrayList<>();
-        for (Square square : squares) {
-            if (square instanceof PropertySquare) {
-                propertySquares.add(square);
-            }
-        }
-    
-        Collections.shuffle(propertySquares);
-    
-        int numPlayers = players.length;
-        int propertiesPerPlayer = Math.max(propertySquares.size() / numPlayers, 1); // Ensure propertiesPerPlayer is at least 1
-        int remainingProperties = propertySquares.size() % numPlayers;
-    
-        int propertyIndex = 0;
-        for (int i = 0; i < numPlayers; i++) {
-            int propertiesToAssign = propertiesPerPlayer;
-            if (i < remainingProperties) {
-                propertiesToAssign++;
-            }
-    
-            for (int j = 0; j < propertiesToAssign && propertyIndex < propertySquares.size(); j++) {
-                PropertySquare propertySquare = (PropertySquare) propertySquares.get(propertyIndex);
-                propertySquare.setOwner(players[i]);
-                players[i].addProperty(propertySquare); // Add the property to the player's hand
-                propertyIndex++;
-            }
-        }
-        // print the properties of each player
-        for (Player player : players) {
-            System.out.println(player.getName() + " has the following properties:");
-            List<PropertySquare> properties = player.getProperties();
-            for (int i = 0; i < Math.min(10, properties.size()); i++) {
-                PropertySquare propertySquare = properties.get(i);
-                System.out.println(propertySquare.getName());
-            }
-            System.out.println();
-        }
-
-    }
-    
-    
 
     public int getNumTasks() {
         return numTasks;
@@ -243,6 +198,11 @@ public class GameBoard {
         return false;
     }
 
+    // New method to check if a player has developed all their properties
+    public boolean hasPlayerDevelopedAllProperties(Player player) {
+        return player.getPropertyStage() == 3;
+    }
+
     public void movePlayer(Player player, int steps, String playerName) {
         // get the current position of the player
         int x = player.getX();
@@ -278,20 +238,6 @@ public class GameBoard {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-    
-    public boolean hasPlayerDevelopedAllProperties(Player player) {
-        for (int position = 0; position < squares.length; position++) {
-            SquareType squareType = getSquareType(position);
-            if (squareType == SquareType.PROPERTY) {
-                // Check if the property square is owned by the player and is developed
-                PropertySquare propertySquare = (PropertySquare) squares[position];
-                if (propertySquare.getOwner() == player && !propertySquare.isDeveloped()) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     public boolean isGameOver() {
