@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Player {
@@ -10,6 +12,7 @@ public class Player {
     private static Scanner scanner = new Scanner(System.in);
     private int x;
     private int y;
+    private List<PropertySquare> properties = new ArrayList<>();
 
     public Player(String name, String mark) {
         this.name = name;
@@ -17,6 +20,14 @@ public class Player {
         this.position = 0;
         this.permissionTokens = 2;
         this.resourceTokens = 2;
+    }
+
+    public void addProperty(PropertySquare propertySquare) {
+        properties.add(propertySquare);
+    }
+
+    public List<PropertySquare> getProperties() {
+        return properties;
     }
 
     public String getName() {

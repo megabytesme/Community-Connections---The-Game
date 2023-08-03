@@ -16,7 +16,7 @@ public class Main {
         }
 
         // Array of symbols to represent players (can be extended if needed)
-        String[] playerSymbols = {"X", "O", "A", "B", "C", "D", "E", "F"};
+        String[] playerSymbols = {"A", "B", "C", "D", "E", "F", "G", "H"};
 
         // Create an array to hold the player names
         String[] playerNames = new String[numPlayers];
@@ -56,7 +56,7 @@ public class Main {
             PlayerProgress currentPlayerProgress = playerProgresses[currentPlayerIndex];
 
             gameBoard.displayGameBoard(players);
-            System.out.println("\n" + currentPlayer.getName() + ", it's your turn!");
+            System.out.println("\n" + currentPlayer.getName() + " (" + currentPlayer.getMark() + ")" + ", it's your turn!");
 
             // Rolling the dice and moving the player
             int diceRoll = gameBoard.rollDice();
