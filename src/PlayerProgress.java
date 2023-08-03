@@ -1,38 +1,81 @@
 public class PlayerProgress {
-    private int[] completedTasks;
+    private boolean[] completedTasks;
 
     public PlayerProgress(int numTasks) {
-        completedTasks = new int[numTasks];
+        completedTasks = new boolean[numTasks];
     }
 
-    public void markTaskCompleted(int taskIndex) {
-        completedTasks[taskIndex] = 1;
+    // Update the markTaskCompleted method to take Square object as an argument
+    public void markTaskCompleted(Square square) {
+        int taskIndex = getTaskIndex(square);
+        if (taskIndex >= 0) {
+            completedTasks[taskIndex] = true;
+        }
+    }
+
+
+    public int getTaskIndex(Square square) {
+        for (int i = 0; i < completedTasks.length; i++) {
+            if (square.getName().equals(getTaskName(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public boolean isTaskCompleted(int taskIndex) {
-        return completedTasks[taskIndex] == 1;
+        return completedTasks[taskIndex];
     }
 
     public String getCompletedTasksString() {
         StringBuilder sb = new StringBuilder();
+        boolean first = true;
         for (int i = 0; i < completedTasks.length; i++) {
-            if (completedTasks[i] == 1) {
-                sb.append(SquareType.values()[i]).append(", ");
+            if (completedTasks[i]) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                sb.append(getTaskName(i));
+                first = false;
             }
-        }
-        // Remove the trailing ", " if tasks are completed
-        if (sb.length() > 2) {
-            sb.setLength(sb.length() - 2);
         }
         return sb.toString();
     }
 
     public boolean isCompletedCommunityNetwork() {
-        for (int i = 0; i < completedTasks.length; i++) {
-            if (completedTasks[i] == 0) {
+        // For simplicity, we assume that the player has completed the community network
+        // if all tasks are completed.
+        for (boolean completed : completedTasks) {
+            if (!completed) {
                 return false;
             }
         }
         return true;
+    }
+
+    public int getCompletedTasksCount() {
+        int count = 0;
+        for (boolean completed : completedTasks) {
+            if (completed) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private String getTaskName(int taskIndex) {
+        // In a real game, you would have a list of all tasks and retrieve the name using the index.
+        // For simplicity, we'll use a placeholder task name here.
+        String[] taskNames = {
+            "Acquiring Permissions",
+            "Acquiring and Installing Hardware",
+            "Informing and Educating the Community",
+            "Collecting Resources",
+            // Add more task names if needed
+        };
+        if (taskIndex >= 0 && taskIndex < taskNames.length) {
+            return taskNames[taskIndex];
+        }
+        return "UNKNOWN";
     }
 }

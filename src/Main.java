@@ -18,18 +18,25 @@ public class Main {
         // Array of symbols to represent players (can be extended if needed)
         String[] playerSymbols = {"X", "O", "A", "B", "C", "D", "E", "F"};
 
-        // Creating an array to hold the players
-        Player[] players = new Player[numPlayers];
+        // Create an array to hold the player names
+        String[] playerNames = new String[numPlayers];
 
-        // Initializing players
+        // Initializing players and asking for their names
         for (int i = 0; i < numPlayers; i++) {
             System.out.print("Enter the name of Player " + (i + 1) + ": ");
-            String playerName = scanner.nextLine();
-            players[i] = new Player(playerName, playerSymbols[i]);
+            playerNames[i] = scanner.nextLine();
+        }
+
+        // Create an array to hold the player objects
+        Player[] players = new Player[numPlayers];
+
+        // Initializing players with names and symbols
+        for (int i = 0; i < numPlayers; i++) {
+            players[i] = new Player(playerNames[i], playerSymbols[i]);
         }
 
         // Creating a new game board
-        GameBoard gameBoard = new GameBoard(numPlayers);
+        GameBoard gameBoard = new GameBoard(playerNames, playerSymbols, scanner); // Pass the shared scanner here
 
         // Creating player progress for each player
         PlayerProgress[] playerProgresses = new PlayerProgress[numPlayers];
@@ -40,7 +47,7 @@ public class Main {
         System.out.println("\nWelcome to the game!");
 
         // Game loop
-        while (!gameBoard.isGameOver()) {
+        while (true) {
             int currentPlayerIndex = gameBoard.getCurrentPlayerIndex();
             Player currentPlayer = players[currentPlayerIndex];
             PlayerProgress currentPlayerProgress = playerProgresses[currentPlayerIndex];
@@ -51,13 +58,29 @@ public class Main {
             // Rolling the dice and moving the player
             int diceRoll = gameBoard.rollDice();
             System.out.println("You rolled a " + diceRoll);
-            gameBoard.movePlayer(currentPlayer, diceRoll);
+            gameBoard.movePlayer(currentPlayer, diceRoll, currentPlayer.getName());
 
             // Getting the current square the player is on
             Square currentSquare = gameBoard.getCurrentSquare(currentPlayer.getPosition());
 
-            // Performing the task on the current square
-            currentSquare.performTask(currentPlayer, currentPlayerProgress);
+            // Perform the action based on the type of square the player lands on
+            if (currentSquare instanceof PermissionSquare) {
+                // Ask the player if they want to attempt getting permission
+                System.out.print("Do you want to attempt getting permission (yes/no)? ");
+                String answer = scanner.nextLine().trim().toLowerCase();
+                if (answer.equals("yes")) {
+                    ((PermissionSquare) currentSquare).attemptGetPermission(currentPlayer);
+                }
+            } else if (currentSquare instanceof HardwareSquare) {
+                // Perform the hardware task for the player
+                ((HardwareSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+            } else if (currentSquare instanceof EducationSquare) {
+                // Perform the education task for the player
+                ((EducationSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+            } else if (currentSquare instanceof ResourceSquare) {
+                // Perform the resource collection task for the player
+                ((ResourceSquare) currentSquare).performTask(currentPlayer, currentPlayerProgress);
+            }
 
             // Displaying current player's position and resources
             System.out.println("Current Game State:");
@@ -79,7 +102,7 @@ public class Main {
                         }
                     }
                 }
-                gameBoard.setGameOver(true);
+                break; // Exit the game loop
             }
 
             // Update the current player index for the next turn

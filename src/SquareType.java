@@ -2,5 +2,7 @@ public enum SquareType {
     PERMISSION,
     HARDWARE,
     EDUCATION,
-    RESOURCE
+    RESOURCE,
+    START,
+    PROPERTY
 }

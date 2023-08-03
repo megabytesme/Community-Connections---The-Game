@@ -2,15 +2,19 @@ import java.util.Scanner;
 
 public class Player {
     private String name;
-    private String mark; // Symbol to represent the player on the game board
+    private String mark;
     private int position;
-    private int resources;
+    private int permissionTokens;
+    private int resourceTokens;
+    private PlayerProgress playerProgress;
+    private static Scanner scanner = new Scanner(System.in);
 
     public Player(String name, String mark) {
         this.name = name;
         this.mark = mark;
-        this.position = 0; // Start position on the game board (0-indexed)
-        this.resources = 0; // Start with 0 resources
+        this.position = 0;
+        this.permissionTokens = 2;
+        this.resourceTokens = 2;
     }
 
     public String getName() {
@@ -26,11 +30,11 @@ public class Player {
     }
 
     public int getResources() {
-        return resources;
+        return resourceTokens;
     }
 
     public void addResources(int resources) {
-        this.resources += resources;
+        this.resourceTokens += resources;
     }
 
     // New method to set the player's mark
@@ -44,8 +48,6 @@ public class Player {
     }
 
     public int getContribution(int maxContribution) {
-        // Assume the player's contribution is input from the user in this example
-        Scanner scanner = new Scanner(System.in);
         System.out.print(getName() + ", enter your contribution (0 to " + maxContribution + "): ");
         int contribution = scanner.nextInt();
         while (contribution < 0 || contribution > maxContribution) {
@@ -56,7 +58,6 @@ public class Player {
     }
 
     public int getPlayerContribution(Square square, int maxContribution) {
-        Scanner scanner = new Scanner(System.in);
         int contribution;
         do {
             System.out.print(this.getName() + ", enter your contribution (0 to " + maxContribution + "): ");
@@ -65,5 +66,41 @@ public class Player {
         } while (contribution < 0 || contribution > maxContribution);
 
         return contribution;
+    }
+
+    public void addPermissionToken() {
+        permissionTokens++;
+    }
+
+    public void usePermissionToken() {
+        permissionTokens--;
+    }
+
+    public int getPermissionTokens() {
+        return permissionTokens;
+    }
+
+    public void addResourceToken() {
+        resourceTokens++;
+    }
+
+    public void useResourceToken() {
+        resourceTokens--;
+    }
+
+    public int getResourceTokens() {
+        return resourceTokens;
+    }
+
+    public PlayerProgress getPlayerProgress() {
+        return playerProgress;
+    }
+
+    public void setPlayerProgress(PlayerProgress playerProgress) {
+        this.playerProgress = playerProgress;
+    }
+
+    public static void closeScanner() {
+        scanner.close();
     }
 }
