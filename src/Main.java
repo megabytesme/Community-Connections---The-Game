@@ -82,6 +82,7 @@ public class Main {
         System.out.println("Enter the number of properties each player should have (1 to 10): ");
         System.out.println("Note: The number of properties each player has will be the same. I recommend 1-2 for a short game, 3-5 for a long game.");
         int numProperties = scanner.nextInt();
+        scanner.nextLine();
 
         GameBoard gameBoard = new GameBoard(playerNames, playerSymbols, useOwnDice);
 
